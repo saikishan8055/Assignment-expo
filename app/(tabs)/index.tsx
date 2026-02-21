@@ -1,98 +1,329 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+// import { View, Text, FlatList, Pressable, TextInput } from 'react-native';
+// import { useRouter } from 'expo-router';
+// import { useEffect, useMemo, useState } from 'react';
+// import { providers } from '../../data/providers';
+// import ProviderSkeleton from '../components/ProviderSkeleton';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+// const categories = ['All', 'Home Chef', 'Home Gym', 'Pet Groomer'];
+
+// export default function HomeScreen() {
+//   const router = useRouter();
+
+//   const [search, setSearch] = useState('');
+//   const [selectedCategory, setSelectedCategory] = useState('All');
+//   const [favorites, setFavorites] = useState<string[]>([]);
+//   const [loading, setLoading] = useState(true);
+
+//   // Fake loading delay (skeleton demo)
+//   useEffect(() => {
+//     setTimeout(() => setLoading(false), 1200);
+//   }, []);
+
+//   const filteredProviders = useMemo(() => {
+//     return providers.filter((p) => {
+//       const matchCategory =
+//         selectedCategory === 'All' || p.category === selectedCategory;
+
+//       const matchSearch = p.name
+//         .toLowerCase()
+//         .includes(search.toLowerCase());
+
+//       return matchCategory && matchSearch;
+//     });
+//   }, [search, selectedCategory]);
+
+//   const toggleFavorite = (id: string) => {
+//     setFavorites((prev) =>
+//       prev.includes(id)
+//         ? prev.filter((f) => f !== id)
+//         : [...prev, id]
+//     );
+//   };
+
+//   return (
+//     <View className="flex-1 bg-gray-100 dark:bg-black">
+//       {/* Header */}
+//       <View className="bg-white px-6 pt-14 pb-4 dark:bg-neutral-900">
+//         <Text className="text-3xl font-extrabold text-gray-900 dark:text-white">
+//           Discover
+//         </Text>
+
+//         {/* Search */}
+//         <TextInput
+//           placeholder="Search services..."
+//           placeholderTextColor="#9ca3af"
+//           value={search}
+//           onChangeText={setSearch}
+//           className="mt-4 rounded-xl bg-gray-100 px-4 py-3 text-gray-900 dark:bg-neutral-800 dark:text-white"
+//         />
+//       </View>
+
+//       {/* Categories */}
+//       <FlatList
+//         horizontal
+//         data={categories}
+//         keyExtractor={(item) => item}
+//         showsHorizontalScrollIndicator={false}
+//         contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
+//         renderItem={({ item }) => {
+//           const active = item === selectedCategory;
+//           return (
+//             <Pressable
+//               onPress={() => setSelectedCategory(item)}
+//               className={`mr-3 rounded-full px-4 py-2 ${
+//                 active
+//                   ? 'bg-indigo-600'
+//                   : 'bg-white dark:bg-neutral-800'
+//               }`}
+//             >
+//               <Text
+//                 className={`text-sm font-medium ${
+//                   active ? 'text-white' : 'text-gray-700 dark:text-gray-300'
+//                 }`}
+//               >
+//                 {item}
+//               </Text>
+//             </Pressable>
+//           );
+//         }}
+//       />
+
+//       {/* Providers */}
+//       <FlatList
+//         data={loading ? Array(4).fill(null) : filteredProviders}
+//         keyExtractor={(_, index) => index.toString()}
+//         contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
+//         renderItem={({ item }) =>
+//           loading ? (
+//             <ProviderSkeleton />
+//           ) : (
+//             <Pressable
+//               onPress={() =>
+//                 router.push({
+//                   pathname: '/provider/[id]',
+//                   params: { id: item.id },
+//                 })
+//               }
+//               className="mb-5 rounded-3xl bg-white p-5 shadow-md dark:bg-neutral-900"
+//             >
+//               {/* Top */}
+//               <View className="flex-row justify-between items-center">
+//                 <Text className="text-lg font-semibold text-gray-900 dark:text-white">
+//                   {item.name}
+//                 </Text>
+
+//                 <Pressable onPress={() => toggleFavorite(item.id)}>
+//                   <Text className="text-xl">
+//                     {favorites.includes(item.id) ? '❤️' : '🤍'}
+//                   </Text>
+//                 </Pressable>
+//               </View>
+
+//               {/* Category */}
+//               <Text className="mt-2 text-sm text-indigo-600">
+//                 {item.category}
+//               </Text>
+
+//               {/* Description */}
+//               <Text
+//                 numberOfLines={2}
+//                 className="mt-2 text-gray-600 dark:text-gray-400"
+//               >
+//                 {item.description}
+//               </Text>
+
+//               {/* Footer */}
+//               <View className="mt-4 flex-row justify-between items-center">
+//                 <Text className="text-sm text-gray-500">
+//                   📍 {item.location}
+//                 </Text>
+
+//                 <Text className="font-semibold text-indigo-600">
+//                   View →
+//                 </Text>
+//               </View>
+//             </Pressable>
+//           )
+//         }
+//       />
+//     </View>
+//   );
+// }
+import { View, Text, FlatList, Pressable, TextInput } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
+
+import { providers } from '../../data/providers';
+import ProviderSkeleton from '../components/ProviderSkeleton';
+
+const categories = [
+  'All',
+  'Favorites',
+  'Home Chef',
+  'Home Gym',
+  'Pet Groomer',
+];
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const router = useRouter();
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const [search, setSearch] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fake loading delay
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // 🔑 FILTER LOGIC (Favorites included)
+  const filteredProviders = useMemo(() => {
+    return providers.filter((p) => {
+      // Favorites tab
+      if (selectedCategory === 'Favorites') {
+        return (
+          favorites.includes(p.id) &&
+          p.name.toLowerCase().includes(search.toLowerCase())
+        );
+      }
+
+      const matchCategory =
+        selectedCategory === 'All' || p.category === selectedCategory;
+
+      const matchSearch = p.name
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
+      return matchCategory && matchSearch;
+    });
+  }, [search, selectedCategory, favorites]);
+
+  const toggleFavorite = (id: string) => {
+    setFavorites((prev) =>
+      prev.includes(id)
+        ? prev.filter((f) => f !== id)
+        : [...prev, id]
+    );
+  };
+
+  return (
+    <View className="flex-1 bg-gray-100 dark:bg-black">
+      {/* Header */}
+      <View className="bg-white px-6 pt-14 pb-4 dark:bg-neutral-900">
+        <Text className="text-3xl font-extrabold text-gray-900 dark:text-white">
+          Discover
+        </Text>
+
+        {/* Search */}
+        <TextInput
+          placeholder="Search services..."
+          placeholderTextColor="#9ca3af"
+          value={search}
+          onChangeText={setSearch}
+          className="mt-4 rounded-xl bg-gray-100 px-4 py-3 text-gray-900 dark:bg-neutral-800 dark:text-white"
+        />
+      </View>
+
+      {/* Categories */}
+      <FlatList
+        horizontal
+        data={categories}
+        keyExtractor={(item) => item}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
+        renderItem={({ item }) => {
+          const active = item === selectedCategory;
+
+          return (
+            <Pressable
+              onPress={() => setSelectedCategory(item)}
+              className={`mr-3 rounded-full px-4 py-2 ${
+                active
+                  ? 'bg-indigo-600'
+                  : 'bg-white dark:bg-neutral-800'
+              }`}
+            >
+              <Text
+                className={`text-sm font-medium ${
+                  active
+                    ? 'text-white'
+                    : 'text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                {item}
+              </Text>
+            </Pressable>
+          );
+        }}
+      />
+
+      {/* Providers */}
+      <FlatList
+        data={loading ? Array(4).fill(null) : filteredProviders}
+        keyExtractor={(_, index) => index.toString()}
+        contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
+        ListEmptyComponent={
+          !loading && selectedCategory === 'Favorites' ? (
+            <Text className="mt-20 text-center text-gray-500">
+              No favorites yet ❤️
+            </Text>
+          ) : null
+        }
+        renderItem={({ item }) =>
+          loading ? (
+            <ProviderSkeleton />
+          ) : (
+            <Pressable
+              onPress={() =>
+                router.push({
+                  pathname: '/provider/[id]',
+                  params: { id: item.id },
+                })
+              }
+              className="mb-5 rounded-3xl bg-white p-5 shadow-md dark:bg-neutral-900"
+            >
+              {/* Top */}
+              <View className="flex-row justify-between items-center">
+                <Text className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {item.name}
+                </Text>
+
+                <Pressable onPress={() => toggleFavorite(item.id)}>
+                  <Text className="text-xl">
+                    {favorites.includes(item.id) ? '❤️' : '🤍'}
+                  </Text>
+                </Pressable>
+              </View>
+
+              {/* Category */}
+              <Text className="mt-2 text-sm text-indigo-600">
+                {item.category}
+              </Text>
+
+              {/* Description */}
+              <Text
+                numberOfLines={2}
+                className="mt-2 text-gray-600 dark:text-gray-400"
+              >
+                {item.description}
+              </Text>
+
+              {/* Footer */}
+              <View className="mt-4 flex-row justify-between items-center">
+                <Text className="text-sm text-gray-500">
+                  📍 {item.location}
+                </Text>
+
+                <Text className="font-semibold text-indigo-600">
+                  View →
+                </Text>
+              </View>
+            </Pressable>
+          )
+        }
+      />
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
